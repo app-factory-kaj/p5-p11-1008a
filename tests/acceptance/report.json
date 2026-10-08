@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-08T08:12:23Z",
+  "commit": "5f6e44104814342fdd3959bdbcb556483d593071",
+  "baseUrl": "http://development-default.openchoreoapis.localhost:19080/p5-p11-1008a-greeter-api-http",
+  "isolation": "each scenario is a stateless GET against /hello; no shared data to isolate",
+  "scenarios": [
+    {
+      "feature": "F1 Greeting",
+      "featureFile": "specs/validation/acceptance/F1-greeting.feature",
+      "line": 6,
+      "rule": "A caller who supplies a name receives a greeting in the fixed format",
+      "scenario": "Greeting a named caller",
+      "tags": ["@story-F1.1"],
+      "outcome": "passed",
+      "steps": [
+        {
+          "text": "the greeter service is running",
+          "keyword": "Given",
+          "command": "curl -s -o /dev/null -w '%{http_code}' \"$BASE/hello?name=Ada\"",
+          "exit": 0,
+          "observed": "200"
+        },
+        {
+          "text": "Ada calls GET /hello with name \"Ada\"",
+          "keyword": "When",
+          "command": "curl -s -w '\\nHTTP_STATUS:%{http_code}\\n' \"$BASE/hello?name=Ada\"",
+          "observed": "HTTP 200, below the REST API since this is a headless JSON endpoint with no UI to carry the call"
+        },
+        {
+          "text": "she receives a greeting reading \"Hello, Ada!\"",
+          "keyword": "Then",
+          "command": "curl -s \"$BASE/hello?name=Ada\" | jq -r .message",
+          "exit": 0,
+          "observed": "Hello, Ada!"
+        }
+      ],
+      "evidence": {
+        "network": [
+          { "method": "GET", "url": "/hello?name=Ada", "status": 200, "body": "{\"message\":\"Hello, Ada!\"}" }
+        ]
+      }
+    },
+    {
+      "feature": "F1 Greeting",
+      "featureFile": "specs/validation/acceptance/F1-greeting.feature",
+      "line": 15,
+      "rule": "A caller cannot get a greeting without supplying a name",
+      "scenario": "Omitting the name is refused",
+      "tags": ["@story-F1.2", "@negative"],
+      "outcome": "passed",
+      "steps": [
+        {
+          "text": "the greeter service is running",
+          "keyword": "Given",
+          "command": "curl -s -o /dev/null -w '%{http_code}' \"$BASE/hello?name=Ada\"",
+          "exit": 0,
+          "observed": "200"
+        },
+        {
+          "text": "Ada calls GET /hello without a name",
+          "keyword": "When",
+          "command": "curl -s -w '\\nHTTP_STATUS:%{http_code}\\n' \"$BASE/hello\"",
+          "observed": "HTTP 400, below the REST API since this is a headless JSON endpoint with no UI to carry the call"
+        },
+        {
+          "text": "she receives an error response and no greeting",
+          "keyword": "Then",
+          "command": "curl -s -o /dev/null -w '%{http_code}' \"$BASE/hello\"",
+          "exit": 0,
+          "observed": "400, body {\"error\":\"name query parameter is required\"} — no \"message\" greeting field present"
+        }
+      ],
+      "evidence": {
+        "network": [
+          { "method": "GET", "url": "/hello", "status": 400, "body": "{\"error\":\"name query parameter is required\"}" }
+        ]
+      }
+    }
+  ]
+}
