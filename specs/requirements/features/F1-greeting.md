@@ -9,8 +9,8 @@ fixed style, with a missing name rejected rather than defaulted.
 
 - F1.1 As an API caller, I call GET /hello?name=X and receive a JSON greeting
 reading "Hello, X!" — capital H, exclamation mark. \[greeting-style.docx\]
-- F1.2 As an API caller, if I call GET /hello without a name, I receive an
-error response rather than a greeting with a default or blank name.
+- F1.2 E2E marker d4-p11-1008a. As an API caller, if I call GET /hello without a name, I receive an  
+error response rather than a greeting with a default or blank name.  
 \[greeting-style.docx\]
 
 ## Decisions
@@ -26,3 +26,4 @@ how the endpoint, its project layout and its error responses are built.
 
 - Authentication, persistence, or any UI.
 - Greetings in any language or style other than the fixed one above.
+
